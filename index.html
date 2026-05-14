@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eva — Tu carpa, online · Scalerics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0F1419;
+  --text:#e2e8f0;
+  --gold:#C9975F;
+  --gold-lt:#E8C99A;
+  --gold-dk:#7A5535;
+  --crystal:#88C7D8;
+  --slate:#64748b;
+  --card:#rgba(255,255,255,.04);
+  --border:rgba(201,151,95,.18);
+  --ff-body:'DM Sans',sans-serif;
+  --ff-disp:'Cormorant Garamond',serif;
+}
+
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--ff-body)}
+
+/* ── Progress bar ── */
+#progress{
+  position:fixed;top:0;left:0;height:3px;width:12.5%;
+  background:linear-gradient(90deg,#06B6D4,#3b82f6);
+  z-index:100;transition:width .5s ease
+}
+
+/* ── Counter ── */
+#counter{
+  position:fixed;top:16px;right:20px;z-index:100;
+  font-size:12px;color:var(--slate);letter-spacing:.05em;font-weight:300
+}
+
+/* ── Slides wrapper ── */
+#deck{position:relative;width:100%;height:100vh}
+
+.slide{
+  position:absolute;inset:0;
+  opacity:0;transform:translateX(60px);
+  pointer-events:none;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  padding:64px 52px 110px;
+  transition:opacity .5s ease,transform .5s ease
+}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+
+/* ── Nav ── */
+#nav{
+  position:fixed;bottom:28px;left:0;right:0;
+  display:flex;justify-content:center;align-items:center;gap:16px;z-index:100
+}
+.nbtn{
+  width:40px;height:40px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);
+  color:var(--text);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:14px;transition:background .2s,border-color .2s
+}
+.nbtn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+#dots{display:flex;gap:8px;align-items:center}
+.dot{
+  width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);
+  cursor:pointer;transition:background .3s,transform .3s
+}
+.dot.on{background:var(--gold);transform:scale(1.4)}
+
+/* ── Shared text atoms ── */
+.label{
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:16px
+}
+.title{
+  font-family:var(--ff-disp);font-size:clamp(34px,5vw,58px);
+  font-weight:600;line-height:1.1;text-align:center;margin-bottom:44px
+}
+.title em{font-style:italic;color:var(--gold)}
+
+/* ═══════════════════════════
+   SLIDE 1 · PORTADA
+═══════════════════════════ */
+#s1{background:var(--bg);overflow:hidden}
+#s1::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 60% at 82% 50%,rgba(201,151,95,.09) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 70% at 5% 85%,rgba(136,199,216,.07) 0%,transparent 60%)
+}
+#s1::after{
+  content:'';position:absolute;right:-60px;top:50%;transform:translateY(-50%);
+  width:480px;height:380px;pointer-events:none;
+  border:1px solid rgba(201,151,95,.07);border-radius:4px;
+  background:
+    linear-gradient(135deg,transparent 48%,rgba(201,151,95,.05) 48%,rgba(201,151,95,.05) 52%,transparent 52%),
+    linear-gradient(45deg, transparent 48%,rgba(201,151,95,.03) 48%,rgba(201,151,95,.03) 52%,transparent 52%)
+}
+
+.s1-inner{position:relative;z-index:1;max-width:740px;width:100%}
+.s1-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(201,151,95,.1);border:1px solid rgba(201,151,95,.28);
+  border-radius:100px;padding:5px 15px;font-size:12px;color:var(--gold);
+  letter-spacing:.08em;font-weight:500;text-transform:uppercase;margin-bottom:32px
+}
+.s1-h1{
+  font-family:var(--ff-disp);font-size:clamp(60px,9vw,108px);
+  font-weight:400;line-height:.94;letter-spacing:-.02em;color:var(--text);margin-bottom:10px
+}
+.s1-h1 em{font-style:italic;color:var(--gold)}
+.s1-sub{font-size:16px;color:var(--slate);font-weight:300;margin-bottom:44px;letter-spacing:.01em}
+.s1-bullets{display:flex;flex-direction:column;gap:13px}
+.s1-b{display:flex;align-items:center;gap:13px;font-size:15px;font-weight:300;color:rgba(226,232,240,.75)}
+.s1-b .ico{font-size:20px;flex-shrink:0}
+
+/* ═══════════════════════════
+   SLIDE 2 · PROBLEMA
+═══════════════════════════ */
+#s2{background:var(--bg)}
+.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;width:100%}
+.pcard{
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;padding:32px 24px;transition:border-color .3s
+}
+.pcard:hover{border-color:rgba(201,151,95,.28)}
+.pcard-ico{font-size:36px;margin-bottom:16px;display:block}
+.pcard-h{font-family:var(--ff-disp);font-size:22px;font-weight:600;margin-bottom:10px;color:var(--text)}
+.pcard-p{font-size:14px;color:rgba(226,232,240,.5);line-height:1.65;font-weight:300}
+
+/* ═══════════════════════════
+   SLIDE 3 · SOLUCIÓN
+═══════════════════════════ */
+#s3{background:var(--bg)}
+.sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 40px;max-width:720px;width:100%;margin-bottom:44px}
+.sol-row{
+  display:flex;align-items:flex-start;gap:13px;
+  padding:17px 0;border-bottom:1px solid rgba(255,255,255,.06)
+}
+.sol-chk{
+  width:22px;height:22px;border-radius:50%;flex-shrink:0;margin-top:2px;
+  background:rgba(201,151,95,.13);border:1px solid rgba(201,151,95,.32);
+  display:flex;align-items:center;justify-content:center
+}
+.sol-chk i{font-size:9px;color:var(--gold)}
+.sol-txt{font-size:15px;color:rgba(226,232,240,.82);line-height:1.45}
+.stats{display:flex;gap:44px;max-width:720px;width:100%}
+.stat{
+  flex:1;background:rgba(255,255,255,.03);
+  border:1px solid rgba(201,151,95,.13);border-radius:12px;padding:24px;text-align:center
+}
+.stat-n{font-family:var(--ff-disp);font-size:52px;font-weight:600;color:var(--gold);line-height:1;margin-bottom:8px}
+.stat-l{font-size:13px;color:var(--slate);font-weight:300;line-height:1.45}
+
+/* ═══════════════════════════
+   SLIDES 4-6 · MOCKUPS
+═══════════════════════════ */
+.mslide{background:var(--bg);padding:36px 52px 110px}
+.mhead{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  max-width:780px;width:100%;margin-bottom:18px
+}
+.mhead-title{font-family:var(--ff-disp);font-size:clamp(22px,3vw,32px);font-weight:600;color:var(--text)}
+.mhead-tag{
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);
+  font-weight:600;background:rgba(201,151,95,.08);padding:4px 12px;
+  border-radius:100px;border:1px solid rgba(201,151,95,.22)
+}
+
+/* browser shell */
+.browser{width:100%;max-width:780px;border-radius:12px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.8)}
+.bbar{
+  background:#0d1117;padding:9px 14px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(255,255,255,.06)
+}
+.bdot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.burl{
+  flex:1;background:#161b22;border:1px solid rgba(255,255,255,.08);
+  border-radius:5px;padding:3px 10px;font-size:11px;font-family:monospace;color:#64748b
+}
+.bcontent{height:390px;overflow:hidden}
+
+/* ── Aerial tent CSS art (shared across mockups) ── */
+.tent-art{
+  width:100%;height:100%;position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse 30% 20% at 8% 12%,#1a4a1a 0%,transparent 100%),
+    radial-gradient(ellipse 20% 25% at 92% 8%,#1a4a1a 0%,transparent 100%),
+    radial-gradient(ellipse 25% 20% at 85% 90%,#224a22 0%,transparent 100%),
+    radial-gradient(ellipse 30% 18% at 5% 88%,#1a4a1a 0%,transparent 100%),
+    linear-gradient(160deg,#3a6a3a 0%,#4a7a4a 40%,#3a6a3a 100%)
+}
+.tent-art::before{
+  content:'';position:absolute;top:13%;left:9%;right:9%;bottom:13%;
+  border:2px solid rgba(25,25,25,.85);border-radius:2px;
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(30,30,30,.55) 30px,rgba(30,30,30,.55) 31px),
+    repeating-linear-gradient(90deg,transparent,transparent 52px,rgba(30,30,30,.55) 52px,rgba(30,30,30,.55) 53px),
+    linear-gradient(155deg,rgba(235,220,190,.75) 0%,rgba(210,195,165,.6) 45%,rgba(228,213,183,.7) 100%)
+}
+.tent-art::after{
+  content:'';position:absolute;top:13%;left:9%;right:9%;bottom:13%;
+  background:
+    linear-gradient(135deg,transparent calc(50% - 1px),rgba(25,25,25,.45) calc(50% - 1px),rgba(25,25,25,.45) calc(50% + 1px),transparent calc(50% + 1px)),
+    linear-gradient(45deg,transparent calc(50% - 1px),rgba(25,25,25,.45) calc(50% - 1px),rgba(25,25,25,.45) calc(50% + 1px),transparent calc(50% + 1px))
+}
+
+/* ── Mockup 1: Elegante & Nupcial ── */
+.m1{height:100%;background:#FDFAF6;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column}
+.m1-nav{
+  display:flex;align-items:center;padding:11px 22px;background:#fff;
+  border-bottom:1px solid rgba(0,0,0,.07);gap:20px
+}
+.m1-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:#2C1810;margin-right:auto;letter-spacing:.04em}
+.m1-menu{display:flex;gap:16px;list-style:none}
+.m1-menu li a{font-size:10.5px;color:#7A6050;text-decoration:none;letter-spacing:.02em}
+.m1-ctabtn{background:#C9975F;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:10px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600;letter-spacing:.03em}
+.m1-hero{flex:1;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.m1-ht{padding:24px 26px;display:flex;flex-direction:column;justify-content:center;background:#FDFAF6}
+.m1-eye{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#C9975F;margin-bottom:9px;font-weight:600}
+.m1-h1{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:#2C1810;line-height:1.15;margin-bottom:8px}
+.m1-sub{font-size:10.5px;color:#9E7E6E;line-height:1.55;margin-bottom:14px}
+.m1-btns{display:flex;gap:8px}
+.m1-bp{background:#C9975F;color:#fff;border:none;padding:7px 15px;border-radius:6px;font-size:9.5px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600}
+.m1-bs{background:transparent;color:#C9975F;border:1px solid #C9975F;padding:7px 13px;border-radius:6px;font-size:9.5px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.m1-img{overflow:hidden}
+.m1-pkgs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:12px 22px;background:#fff}
+.m1-pkg{background:#FDFAF6;border:1px solid rgba(201,151,95,.22);border-radius:8px;padding:11px;text-align:center}
+.m1-pkg-ico{font-size:17px;margin-bottom:5px}
+.m1-pkg-n{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;color:#2C1810;margin-bottom:2px}
+.m1-pkg-d{font-size:8.5px;color:#9E7E6E;line-height:1.4}
+
+/* ── Mockup 2: Premium & Corporativo ── */
+.m2{height:100%;background:#0D1117;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column}
+.m2-nav{
+  display:flex;align-items:center;padding:11px 22px;
+  background:rgba(255,255,255,.025);border-bottom:1px solid rgba(255,255,255,.07);gap:18px
+}
+.m2-logo{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:#C9975F;margin-right:auto;letter-spacing:.14em;text-transform:uppercase}
+.m2-menu{display:flex;gap:14px;list-style:none}
+.m2-menu li a{font-size:9.5px;color:rgba(255,255,255,.38);text-decoration:none;letter-spacing:.07em;text-transform:uppercase}
+.m2-ctabtn{background:transparent;color:#C9975F;border:1px solid rgba(201,151,95,.4);padding:5px 13px;border-radius:4px;font-size:9.5px;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.m2-hero{position:relative;flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:22px 26px}
+.m2-hbg{position:absolute;inset:0}
+.m2-hbg .tent-art{opacity:.38}
+.m2-ov{position:absolute;inset:0;background:linear-gradient(100deg,rgba(13,17,23,.96) 38%,rgba(13,17,23,.45) 100%)}
+.m2-c{position:relative;z-index:1}
+.m2-badge{display:inline-block;font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:#C9975F;border:1px solid rgba(201,151,95,.3);padding:3px 10px;border-radius:3px;margin-bottom:11px}
+.m2-h1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:rgba(255,255,255,.95);line-height:1.1;margin-bottom:9px;max-width:270px}
+.m2-h1 em{font-style:italic;color:#C9975F}
+.m2-sub{font-size:9.5px;color:rgba(255,255,255,.38);margin-bottom:16px;line-height:1.6;max-width:230px}
+.m2-btns{display:flex;gap:8px}
+.m2-bp{background:#C9975F;color:#fff;border:none;padding:7px 16px;border-radius:4px;font-size:9.5px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600}
+.m2-bs{background:transparent;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.12);padding:7px 13px;border-radius:4px;font-size:9.5px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.m2-svcs{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.06)}
+.m2-svc{padding:11px 13px;border-right:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02)}
+.m2-svc:last-child{border-right:none}
+.m2-sico{font-size:13px;margin-bottom:5px;display:block}
+.m2-stitle{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:3px}
+.m2-sdesc{font-size:8.5px;color:rgba(255,255,255,.28);line-height:1.45}
+
+/* ── Mockup 3: Festivo & Luminoso ── */
+.m3{height:100%;background:#FFF8EF;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column}
+.m3-nav{display:flex;align-items:center;padding:10px 20px;background:#FFF8EF;border-bottom:2px solid #F0D4A8;gap:14px}
+.m3-logo{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:#7A3010;margin-right:auto}
+.m3-menu{display:flex;gap:13px;list-style:none}
+.m3-menu li a{font-size:10px;color:#A06040;text-decoration:none;font-weight:500}
+.m3-ctabtn{background:linear-gradient(135deg,#E8935A,#C9975F);color:#fff;border:none;padding:6px 13px;border-radius:20px;font-size:10px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600}
+.m3-hero{display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden}
+.m3-hl{padding:18px 18px 12px 20px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(145deg,#FFF8EF 0%,#FFEEDD 100%)}
+.m3-eye{font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:#E8935A;margin-bottom:7px;font-weight:600}
+.m3-h1{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;color:#4A1A08;line-height:1.15;margin-bottom:7px}
+.m3-sub{font-size:10px;color:#A06040;line-height:1.55;margin-bottom:13px}
+.m3-btn{background:linear-gradient(135deg,#E8935A,#C9975F);color:#fff;border:none;padding:7px 16px;border-radius:20px;font-size:9.5px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600;width:fit-content}
+.m3-hr{overflow:hidden}
+.m3-gal{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:9px 14px;background:#FFF8EF;border-top:1px solid #F0D4A8}
+.m3-gi{border-radius:6px;overflow:hidden;height:50px;position:relative}
+.m3-glabel{position:absolute;bottom:4px;left:4px;font-size:7.5px;color:#fff;background:rgba(0,0,0,.52);padding:1px 5px;border-radius:3px;font-weight:600}
+.gb1{background:linear-gradient(135deg,#4a7a4a,#2d5a2d)}
+.gb2{background:linear-gradient(135deg,#8a6a3a,#5a4a1d)}
+.gb3{background:linear-gradient(135deg,#4a6a8a,#2d4a6a)}
+.gb4{background:linear-gradient(135deg,#8a4a5a,#6a2d3a)}
+
+/* ═══════════════════════════
+   SLIDE 7 · INVERSIÓN
+═══════════════════════════ */
+#s7{background:var(--bg)}
+.inv-card{
+  background:rgba(255,255,255,.025);border:1px solid rgba(201,151,95,.28);
+  border-radius:24px;padding:44px 52px;max-width:580px;width:100%;
+  text-align:center;position:relative;overflow:hidden
+}
+.inv-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold-dk),var(--gold),var(--gold-lt),var(--gold))
+}
+.inv-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(201,151,95,.1);border:1px solid rgba(201,151,95,.3);
+  border-radius:100px;padding:4px 14px;font-size:11px;color:var(--gold);
+  letter-spacing:.07em;font-weight:600;text-transform:uppercase;margin-bottom:26px
+}
+.inv-price{margin-bottom:8px;line-height:1}
+.inv-cur{font-family:var(--ff-disp);font-size:28px;font-weight:400;color:var(--gold);vertical-align:top;margin-top:11px;display:inline-block}
+.inv-amt{font-family:var(--ff-disp);font-size:72px;font-weight:600;color:var(--text)}
+.inv-mensual{font-size:14px;color:var(--slate);margin-bottom:34px}
+.inv-sep{height:1px;background:rgba(255,255,255,.07);margin:0 -16px 30px}
+.inv-items{display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left}
+.inv-item{display:flex;align-items:flex-start;gap:10px}
+.inv-ico{font-size:18px;flex-shrink:0}
+.inv-txt{font-size:13px;color:rgba(226,232,240,.72);font-weight:300;line-height:1.45}
+
+/* ═══════════════════════════
+   SLIDE 8 · CTA
+═══════════════════════════ */
+#s8{background:var(--bg);overflow:hidden}
+#s8::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 65% 65% at 50% 52%,rgba(201,151,95,.08) 0%,transparent 70%)
+}
+.cta-inner{position:relative;z-index:1;text-align:center;max-width:620px}
+.cta-label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:24px}
+.cta-h1{font-family:var(--ff-disp);font-size:clamp(48px,7.5vw,88px);font-weight:400;color:var(--text);line-height:1.02;margin-bottom:16px}
+.cta-h1 em{font-style:italic;color:var(--gold)}
+.cta-sub{font-size:15px;color:var(--slate);margin-bottom:40px;font-weight:300}
+.cta-wa{
+  display:inline-flex;align-items:center;gap:10px;background:#25D366;
+  color:#fff;text-decoration:none;padding:15px 32px;border-radius:50px;
+  font-size:15px;font-weight:600;letter-spacing:.02em;
+  transition:transform .2s,box-shadow .2s;margin-bottom:26px
+}
+.cta-wa:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(37,211,102,.3)}
+.cta-contact{font-size:13px;color:var(--slate);margin-bottom:38px}
+.cta-contact a{color:var(--gold);text-decoration:none}
+.cta-tagline{font-family:var(--ff-disp);font-size:18px;font-weight:400;color:rgba(226,232,240,.18);letter-spacing:.1em;font-style:italic}
+
+/* ── Watermark ── */
+#wm{position:fixed;bottom:76px;left:22px;font-size:10px;color:rgba(255,255,255,.1);letter-spacing:.1em;text-transform:uppercase;font-weight:600;z-index:99}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="counter">1 / 8</div>
+<div id="wm">Scalerics</div>
+
+<div id="deck">
+
+  <!-- ═══ SLIDE 1 · PORTADA ═══ -->
+  <div class="slide active" id="s1">
+    <div class="s1-inner">
+      <div class="s1-tag"><i class="fa-regular fa-star"></i> Propuesta exclusiva para Eva</div>
+      <h1 class="s1-h1">Tu carpa,<br>no tiene<br><em>web.</em></h1>
+      <p class="s1-sub">Eva, mostrale al mundo dónde sucede la magia.</p>
+      <div class="s1-bullets">
+        <div class="s1-b"><span class="ico">🪟</span><span>Galerías de eventos que enamoran antes del primer llamado</span></div>
+        <div class="s1-b"><span class="ico">📅</span><span>Consultas de disponibilidad online, las 24 horas</span></div>
+        <div class="s1-b"><span class="ico">🌐</span><span>Aparecer en Google cuando buscan carpa para eventos en Uruguay</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 2 · PROBLEMA ═══ -->
+  <div class="slide" id="s2">
+    <div class="label">El problema</div>
+    <h2 class="title">Cada fin de semana sin web<br><em>es un evento perdido</em></h2>
+    <div class="prob-grid">
+      <div class="pcard">
+        <span class="pcard-ico">🔍</span>
+        <div class="pcard-h">No aparecés en Google</div>
+        <p class="pcard-p">Cuando alguien busca "carpa para eventos en Uruguay", encuentra a tu competencia, no a vos.</p>
+      </div>
+      <div class="pcard">
+        <span class="pcard-ico">📸</span>
+        <div class="pcard-h">Tu trabajo duerme en WhatsApp</div>
+        <p class="pcard-p">Tus mejores eventos viven en el chat. Las fotos que convencen no llegan a quienes te necesitan.</p>
+      </div>
+      <div class="pcard">
+        <span class="pcard-ico">💸</span>
+        <div class="pcard-h">Clientes que no volvieron</div>
+        <p class="pcard-p">Sin web, no generás confianza rápido. El cliente elige al que encontró primero, online.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3 · SOLUCIÓN ═══ -->
+  <div class="slide" id="s3">
+    <div class="label">Lo que hacemos</div>
+    <h2 class="title" style="margin-bottom:34px">Tu carpa, <em>visible y elegante</em></h2>
+    <div class="sol-grid">
+      <div class="sol-row">
+        <div class="sol-chk"><i class="fas fa-check"></i></div>
+        <span class="sol-txt">Sitio web profesional con galería de eventos reales</span>
+      </div>
+      <div class="sol-row">
+        <div class="sol-chk"><i class="fas fa-check"></i></div>
+        <span class="sol-txt">Formulario de consulta + disponibilidad en tiempo real</span>
+      </div>
+      <div class="sol-row">
+        <div class="sol-chk"><i class="fas fa-check"></i></div>
+        <span class="sol-txt">SEO local para aparecer en Google Maps de Uruguay</span>
+      </div>
+      <div class="sol-row">
+        <div class="sol-chk"><i class="fas fa-check"></i></div>
+        <span class="sol-txt">WhatsApp click-to-chat para cerrar consultas rápido</span>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-n">87%</div>
+        <div class="stat-l">de los uruguayos busca online antes de contratar un servicio</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">+3×</div>
+        <div class="stat-l">más consultas desde web que solo con redes sociales</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4 · MOCKUP 1: Elegante & Nupcial ═══ -->
+  <div class="slide mslide" id="s4">
+    <div class="mhead">
+      <span class="mhead-title">Elegante &amp; Nupcial</span>
+      <span class="mhead-tag">Opción 1 de 3</span>
+    </div>
+    <div class="browser">
+      <div class="bbar">
+        <span class="bdot" style="background:#FF5F57"></span>
+        <span class="bdot" style="background:#FEBC2E"></span>
+        <span class="bdot" style="background:#28C840"></span>
+        <span class="burl">🔒 www.carpaseva.com.uy</span>
+      </div>
+      <div class="bcontent">
+        <div class="m1">
+          <nav class="m1-nav">
+            <span class="m1-logo">Carpas Eva</span>
+            <ul class="m1-menu">
+              <li><a href="#">Galería</a></li>
+              <li><a href="#">Capacidades</a></li>
+              <li><a href="#">Paquetes</a></li>
+              <li><a href="#">Contacto</a></li>
+            </ul>
+            <button class="m1-ctabtn">Consultar fecha</button>
+          </nav>
+          <div class="m1-hero">
+            <div class="m1-ht">
+              <div class="m1-eye">Carpas para eventos · Uruguay</div>
+              <h1 class="m1-h1">El espacio que siempre imaginaste</h1>
+              <p class="m1-sub">Bodas, quinceañeros y eventos sociales bajo una carpa de cristal pensada para vos.</p>
+              <div class="m1-btns">
+                <button class="m1-bp">Ver galería</button>
+                <button class="m1-bs">Consultar</button>
+              </div>
+            </div>
+            <div class="m1-img"><div class="tent-art"></div></div>
+          </div>
+          <div class="m1-pkgs">
+            <div class="m1-pkg">
+              <div class="m1-pkg-ico">💍</div>
+              <div class="m1-pkg-n">Bodas</div>
+              <div class="m1-pkg-d">Hasta 300 personas · Decoración incluida</div>
+            </div>
+            <div class="m1-pkg">
+              <div class="m1-pkg-ico">🎂</div>
+              <div class="m1-pkg-n">Quinceañeros</div>
+              <div class="m1-pkg-d">Paquetes desde 150 personas</div>
+            </div>
+            <div class="m1-pkg">
+              <div class="m1-pkg-ico">🥂</div>
+              <div class="m1-pkg-n">Eventos sociales</div>
+              <div class="m1-pkg-d">Cumpleaños, aniversarios y más</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 5 · MOCKUP 2: Premium & Corporativo ═══ -->
+  <div class="slide mslide" id="s5">
+    <div class="mhead">
+      <span class="mhead-title">Premium &amp; Corporativo</span>
+      <span class="mhead-tag">Opción 2 de 3</span>
+    </div>
+    <div class="browser">
+      <div class="bbar">
+        <span class="bdot" style="background:#FF5F57"></span>
+        <span class="bdot" style="background:#FEBC2E"></span>
+        <span class="bdot" style="background:#28C840"></span>
+        <span class="burl">🔒 www.carpaseva.com.uy</span>
+      </div>
+      <div class="bcontent">
+        <div class="m2">
+          <nav class="m2-nav">
+            <span class="m2-logo">Eva Events</span>
+            <ul class="m2-menu">
+              <li><a href="#">Servicios</a></li>
+              <li><a href="#">Portfolio</a></li>
+              <li><a href="#">Nosotros</a></li>
+              <li><a href="#">Tarifas</a></li>
+            </ul>
+            <button class="m2-ctabtn">Solicitar cotización</button>
+          </nav>
+          <div class="m2-hero">
+            <div class="m2-hbg"><div class="tent-art"></div></div>
+            <div class="m2-ov"></div>
+            <div class="m2-c">
+              <span class="m2-badge">Carpas · Uruguay · Desde 2015</span>
+              <h1 class="m2-h1">Eventos que dejan <em>marca</em></h1>
+              <p class="m2-sub">Estructuras de cristal y acero para eventos corporativos y sociales de alto nivel en Uruguay.</p>
+              <div class="m2-btns">
+                <button class="m2-bp">Ver portfolio</button>
+                <button class="m2-bs">Contactar</button>
+              </div>
+            </div>
+          </div>
+          <div class="m2-svcs">
+            <div class="m2-svc"><span class="m2-sico">🏢</span><div class="m2-stitle">Corporativos</div><div class="m2-sdesc">Lanzamientos y congresos</div></div>
+            <div class="m2-svc"><span class="m2-sico">🪟</span><div class="m2-stitle">Carpa de cristal</div><div class="m2-sdesc">Estructura panorámica</div></div>
+            <div class="m2-svc"><span class="m2-sico">🍾</span><div class="m2-stitle">Sociales</div><div class="m2-sdesc">Bodas y quinceañeros</div></div>
+            <div class="m2-svc"><span class="m2-sico">📐</span><div class="m2-stitle">A medida</div><div class="m2-sdesc">Diseño personalizado</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 6 · MOCKUP 3: Festivo & Luminoso ═══ -->
+  <div class="slide mslide" id="s6">
+    <div class="mhead">
+      <span class="mhead-title">Festivo &amp; Luminoso</span>
+      <span class="mhead-tag">Opción 3 de 3</span>
+    </div>
+    <div class="browser">
+      <div class="bbar">
+        <span class="bdot" style="background:#FF5F57"></span>
+        <span class="bdot" style="background:#FEBC2E"></span>
+        <span class="bdot" style="background:#28C840"></span>
+        <span class="burl">🔒 www.carpaseva.com.uy</span>
+      </div>
+      <div class="bcontent">
+        <div class="m3">
+          <nav class="m3-nav">
+            <span class="m3-logo">Eva · Carpas &amp; Eventos</span>
+            <ul class="m3-menu">
+              <li><a href="#">Galería</a></li>
+              <li><a href="#">Paquetes</a></li>
+              <li><a href="#">Disponibilidad</a></li>
+              <li><a href="#">Contacto</a></li>
+            </ul>
+            <button class="m3-ctabtn">¡Reservá tu fecha!</button>
+          </nav>
+          <div class="m3-hero">
+            <div class="m3-hl">
+              <div class="m3-eye">📍 Uruguay · Eventos únicos</div>
+              <h1 class="m3-h1">Tu fiesta merece el mejor lugar</h1>
+              <p class="m3-sub">Carpas con luz natural, clima ideal y el espacio que necesitás para celebrar como siempre soñaste.</p>
+              <button class="m3-btn">Consultá disponibilidad →</button>
+            </div>
+            <div class="m3-hr"><div class="tent-art"></div></div>
+          </div>
+          <div class="m3-gal">
+            <div class="m3-gi"><div class="gb1" style="width:100%;height:100%"></div><span class="m3-glabel">Bodas</span></div>
+            <div class="m3-gi"><div class="gb2" style="width:100%;height:100%"></div><span class="m3-glabel">Quinceañeros</span></div>
+            <div class="m3-gi"><div class="gb3" style="width:100%;height:100%"></div><span class="m3-glabel">Corporativos</span></div>
+            <div class="m3-gi"><div class="gb4" style="width:100%;height:100%"></div><span class="m3-glabel">Fiestas</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 7 · INVERSIÓN ═══ -->
+  <div class="slide" id="s7">
+    <div class="label">La inversión</div>
+    <div class="inv-card">
+      <div class="inv-badge"><i class="fas fa-shield-halved"></i> Sin compromiso</div>
+      <div class="inv-price">
+        <span class="inv-cur">USD</span><span class="inv-amt">200</span>
+      </div>
+      <p class="inv-mensual">+ <strong>$25 USD / mes</strong> de mantenimiento y hosting</p>
+      <div class="inv-sep"></div>
+      <div class="inv-items">
+        <div class="inv-item"><span class="inv-ico">🌐</span><span class="inv-txt">Sitio web profesional con galería de eventos</span></div>
+        <div class="inv-item"><span class="inv-ico">📅</span><span class="inv-txt">Formulario de consulta + disponibilidad online</span></div>
+        <div class="inv-item"><span class="inv-ico">🗺️</span><span class="inv-txt">SEO local + Google Business configurado</span></div>
+        <div class="inv-item"><span class="inv-ico">💬</span><span class="inv-txt">WhatsApp integrado + analítica básica</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 8 · CTA ═══ -->
+  <div class="slide" id="s8">
+    <div class="cta-inner">
+      <div class="cta-label">Próximos pasos</div>
+      <h2 class="cta-h1">¿Arrancamos,<br><em>Eva?</em></h2>
+      <p class="cta-sub">Tu carpa ya hace eventos increíbles. Es hora de que el mundo lo sepa.</p>
+      <div>
+        <a href="https://wa.me/59899000000" class="cta-wa">
+          <i class="fab fa-whatsapp" style="font-size:20px"></i>
+          Hablemos por WhatsApp
+        </a>
+      </div>
+      <p class="cta-contact">O escribinos a <a href="mailto:hola@scalerics.com">hola@scalerics.com</a></p>
+      <div class="cta-tagline">Scalerics — Tu negocio, online.</div>
+    </div>
+  </div>
+
+</div><!-- #deck -->
+
+<!-- Nav -->
+<div id="nav">
+  <button class="nbtn" id="prev">←</button>
+  <div id="dots"></div>
+  <button class="nbtn" id="next">→</button>
+</div>
+
+<script>
+const TOTAL = 8;
+let cur = 0, busy = false;
+const slides = Array.from(document.querySelectorAll('.slide'));
+const dotsEl  = document.getElementById('dots');
+const counter = document.getElementById('counter');
+const prog    = document.getElementById('progress');
+
+// init hidden slides
+slides.forEach((s, i) => {
+  if (i !== 0) { s.style.transform = 'translateX(60px)'; s.style.opacity = '0'; }
+});
+
+// build dots
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.addEventListener('click', () => go(i));
+  dotsEl.appendChild(d);
+}
+
+function go(idx) {
+  if (busy || idx === cur || idx < 0 || idx >= TOTAL) return;
+  busy = true;
+  const from = slides[cur], to = slides[idx];
+  const fwd  = idx > cur;
+  const ease = 'opacity .5s ease, transform .5s ease';
+
+  // position incoming instantly
+  to.style.transition = 'none';
+  to.style.transform  = `translateX(${fwd ? 60 : -60}px)`;
+  to.style.opacity    = '0';
+  to.style.pointerEvents = 'none';
+  to.classList.remove('active');
+
+  to.offsetHeight; // reflow
+
+  from.style.transition = ease;
+  to.style.transition   = ease;
+
+  from.style.transform = `translateX(${fwd ? -60 : 60}px)`;
+  from.style.opacity   = '0';
+  from.classList.remove('active');
+  from.style.pointerEvents = 'none';
+
+  to.style.transform = 'translateX(0)';
+  to.style.opacity   = '1';
+  to.classList.add('active');
+  to.style.pointerEvents = 'all';
+
+  setTimeout(() => {
+    from.style.transition = 'none';
+    busy = false;
+  }, 520);
+
+  cur = idx;
+  ui();
+}
+
+function ui() {
+  counter.textContent = `${cur + 1} / ${TOTAL}`;
+  prog.style.width    = `${((cur + 1) / TOTAL) * 100}%`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+
+document.getElementById('prev').addEventListener('click', () => go(cur - 1));
+document.getElementById('next').addEventListener('click', () => go(cur + 1));
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') go(cur + 1);
+  if (e.key === 'ArrowLeft')  go(cur - 1);
+});
+
+ui();
+</script>
+</body>
+</html>
