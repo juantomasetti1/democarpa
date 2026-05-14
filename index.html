@@ -244,11 +244,20 @@
     .bcontent::-webkit-scrollbar-thumb { background: rgba(201,151,95,.3); border-radius: 2px; }
 
     /* hero image — uses real photo, falls back to green (grass color like photo) */
+    /* hero de fondo (m2, m3): cover está OK porque hay overlay encima */
     .photo-hero {
       background-image: url('img/carpa.jpg');
       background-size: cover;
-      background-position: center top;
+      background-position: center center;
       background-color: #3d6b3d;
+    }
+    /* panel lateral m1: contain para mostrar la carpa completa */
+    .photo-contain {
+      background-image: url('img/carpa.jpg');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-color: #3a5c3a;
     }
 
     /* gallery palette */
@@ -577,7 +586,7 @@
                 <button class="m1-bs">Consultar fecha</button>
               </div>
             </div>
-            <div class="m1-hero-img photo-hero" style="min-height:230px;"></div>
+            <div class="m1-hero-img photo-contain" style="min-height:230px;"></div>
           </div>
           <div class="m1-packs">
             <div class="m1-packs-title">Nuestros paquetes</div>
